@@ -1,5 +1,6 @@
 import { Upload } from "lucide-react";
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 const UploadFileArea = () => {
     const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -10,15 +11,16 @@ const UploadFileArea = () => {
         e.stopPropagation();
     }, []);
 
+    //submit action goes here
     const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         e.stopPropagation();
         setIsDragging(false);
+        const files = Array.from(e.dataTransfer.files);
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            setFiles((prevFiles) => [
-                ...prevFiles,
-                ...Array.from(e.dataTransfer.files),
-            ]);
+            files.forEach((file) => {
+                toast(`uploaded ${file.name}`);
+            });
             e.dataTransfer.clearData();
         }
     }, []);

@@ -34,21 +34,21 @@ Route::get('/', function () {
     ]);
 });
 
-// Route::get('/dashboard', function () {
-//     $files = File::all()->map(function ($file) {
-//         return [
-//             'name' => $file->name,
-//             'created_at' => $file->created_at->toDateTimeString(),
-//             'updated_at' => $file->updated_at->toDateTimeString(),
-//             'folder_id' => $file->folder_id,
-//             'user_id' => $file->user_id,
-//         ];
-//     });
+Route::get('/dashboard', function () {
+    $files = File::all()->map(function ($file) {
+        return [
+            'name' => $file->name,
+            'created_at' => $file->created_at->toDateTimeString(),
+            'updated_at' => $file->updated_at->toDateTimeString(),
+            'folder_id' => $file->folder_id,
+            'user_id' => $file->user_id,
+        ];
+    });
 
-//     return Inertia::render('Dashboard', [
-//         'files' => $files
-//     ]);
-// })->middleware(['auth', 'verified'])->name('dashboard');
+    return Inertia::render('Dashboard', [
+        'files' => $files
+    ]);
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::prefix('/files')->group(function () {
     Route::get('/', [FileController::class, 'index'])->name('files.index');

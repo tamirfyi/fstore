@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import { User } from "@/types";
-import Navbar from "@/Components/Navbar";
+import SideMenu from "../Components/SideMenu";
 
 export default function Authenticated({
     user,
@@ -8,9 +8,14 @@ export default function Authenticated({
 }: PropsWithChildren<{ user: User }>) {
     return (
         <div className="min-h-screen bg-white">
-            <Navbar user={user} />
-
-            <main>{children}</main>
+            <main>
+                <div className="flex">
+                    <SideMenu />
+                    <div className="flex flex-col flex-1 w-full gap-2 p-2">
+                        {children}
+                    </div>
+                </div>
+            </main>
         </div>
     );
 }

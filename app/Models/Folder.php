@@ -13,7 +13,7 @@ class Folder extends Model
     // use HasUuids;
 
     protected $table = 'folders';
-    protected $fillable = ['name'];
+    protected $fillable = ['name', "user_id"];
 
 
     public function files(): HasMany

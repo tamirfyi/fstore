@@ -13,7 +13,7 @@ class File extends Model
     // use HasUuids;
 
     protected $table = 'files';
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'folder_id', 'user_id'];
 
     // public function folder(): BelongsTo
     // {

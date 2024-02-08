@@ -1,10 +1,11 @@
+import { router, useForm } from "@inertiajs/react";
+import clsx from "clsx";
 import { Upload } from "lucide-react";
-import { useCallback, useState } from "react";
+import { ReactElement, useCallback, useState } from "react";
 import { toast } from "sonner";
 
 const UploadFileArea = () => {
     const [isDragging, setIsDragging] = useState<boolean>(false);
-    const [files, setFiles] = useState<Array<File>>([]);
 
     const handleDrag = useCallback((e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -39,9 +40,12 @@ const UploadFileArea = () => {
 
     return (
         <div
-            className={`flex flex-col items-center justify-center w-full h-full gap-2 border-2 ${
-                isDragging ? "border-blue-500" : "border-gray-300"
-            } border-dashed`}
+            className={clsx(
+                `flex flex-col gap-2 items-center justify-center w-full h-full border-2 border-dashed border-gray-300`,
+                {
+                    "border-blue-500": isDragging,
+                }
+            )}
             onDrop={handleDrop}
             onDragOver={handleDrag}
             onDragEnter={handleDragIn}
@@ -49,13 +53,11 @@ const UploadFileArea = () => {
         >
             <Upload className="text-gray-400" />
             <p className="text-sm text-gray-400">Drop files here to upload</p>
-            {files.length > 0 && (
-                <ul>
-                    {files.map((file, index) => (
-                        <li key={index}>{file.name}</li>
-                    ))}
-                </ul>
-            )}
+            <input
+                className="invisible"
+                type="file"
+                onChange={(e: any) => handleDrop(e)}
+            />
         </div>
     );
 };

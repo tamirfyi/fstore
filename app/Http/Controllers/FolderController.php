@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\File;
+use App\Models\Folder;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
-class FileController extends Controller
+class FolderController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Inertia::render('Files');
+        //
     }
 
     /**
@@ -31,12 +30,10 @@ class FileController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'folder_id' => 'integer|nullable',
         ]);
 
-        File::create([
+        Folder::create([
             "name" => $validated['name'],
-            "folder_id" => $validated['folder_id'],
             "user_id" => auth()->id()
         ]);
 
@@ -73,19 +70,5 @@ class FileController extends Controller
     public function destroy(string $id)
     {
         //
-    }
-
-    /**
-     * Additionl file pages
-     */
-
-    public function shared()
-    {
-        return Inertia::render('SharedFiles');
-    }
-
-    public function deleted()
-    {
-        return Inertia::render('DeletedFiles');
     }
 }

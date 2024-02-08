@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\FolderController;
 use App\Http\Controllers\ProfileController;
 use App\Models\File;
+use App\Models\Folder;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -51,8 +53,41 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::prefix('/files')->group(function () {
-    Route::get('/', [FileController::class, 'index'])->name('files.index');
-    Route::get('/{id}', [FileController::class, 'show'])->name('files.show');
+    Route::get('/', function () {
+        $files = File::all()->map(function ($file) {
+            return [
+                'id' => $file->id,
+                'name' => $file->name,
+                'created_at' => $file->created_at->toDateTimeString(),
+                'updated_at' => $file->updated_at->toDateTimeString(),
+                'folder_id' => $file->folder_id,
+                'user_id' => $file->user_id,
+            ];
+        });
+
+        $folders = Folder::all()->map(function ($file) {
+            return [
+                'id' => $file->id,
+                'name' => $file->name,
+                'created_at' => $file->created_at->toDateTimeString(),
+                'updated_at' => $file->updated_at->toDateTimeString(),
+                'user_id' => $file->user_id,
+            ];
+        });
+
+        return Inertia::render('Files', [
+            'files' => $files,
+            'folders' => $folders,
+        ]);
+    })->middleware(['auth', 'verified'])->name('files.index');
+    Route::get('/{id}', [FileController::class, 'show'])->middleware(['auth', 'verified'])->name('files.show');
+    Route::post('/new', [FileController::class, 'store'])->middleware(['auth', 'verified'])->name('files.store');
+});
+
+Route::prefix("/folders")->group(function () {
+    Route::get('/', [FolderController::class, 'index'])->name('folders.index');
+    Route::get('/{id}', [FolderController::class, 'show'])->middleware(['auth', 'verified'])->name('folders.show');
+    Route::post('/new', [FolderController::class, 'store'])->name('folders.store');
 });
 
 Route::prefix('/shared')->group(function () {

@@ -14,6 +14,14 @@ export interface FileItem {
     user_id: number;
 }
 
+export interface FolderItem {
+    id: String;
+    name: String;
+    created_at: String;
+    updated_at: String;
+    user_id: number;
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>
 > = T & {

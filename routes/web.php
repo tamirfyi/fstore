@@ -53,33 +53,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::prefix('/files')->group(function () {
-    Route::get('/', function () {
-        $files = File::all()->map(function ($file) {
-            return [
-                'id' => $file->id,
-                'name' => $file->name,
-                'created_at' => $file->created_at->toDateTimeString(),
-                'updated_at' => $file->updated_at->toDateTimeString(),
-                'folder_id' => $file->folder_id,
-                'user_id' => $file->user_id,
-            ];
-        });
-
-        $folders = Folder::all()->map(function ($file) {
-            return [
-                'id' => $file->id,
-                'name' => $file->name,
-                'created_at' => $file->created_at->toDateTimeString(),
-                'updated_at' => $file->updated_at->toDateTimeString(),
-                'user_id' => $file->user_id,
-            ];
-        });
-
-        return Inertia::render('Files', [
-            'files' => $files,
-            'folders' => $folders,
-        ]);
-    })->middleware(['auth', 'verified'])->name('files.index');
+    Route::get('/', [FileController::class, 'index'])->middleware(['auth', 'verified'])->name('files.index');
     Route::get('/{id}', [FileController::class, 'show'])->middleware(['auth', 'verified'])->name('files.show');
     Route::post('/new', [FileController::class, 'store'])->middleware(['auth', 'verified'])->name('files.store');
 });

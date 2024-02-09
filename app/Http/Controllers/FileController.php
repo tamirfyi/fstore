@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
+use App\Models\Folder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,7 +14,31 @@ class FileController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Files');
+        $files = File::where('folder_id', null)->get()->map(function ($file) {
+            return [
+                'id' => $file->id,
+                'name' => $file->name,
+                'created_at' => $file->created_at->toDateTimeString(),
+                'updated_at' => $file->updated_at->toDateTimeString(),
+                'folder_id' => $file->folder_id,
+                'user_id' => $file->user_id,
+            ];
+        });
+
+        $folders = Folder::where('folder_id', null)->get()->map(function ($file) {
+            return [
+                'id' => $file->id,
+                'name' => $file->name,
+                'created_at' => $file->created_at->toDateTimeString(),
+                'updated_at' => $file->updated_at->toDateTimeString(),
+                'user_id' => $file->user_id,
+            ];
+        });
+
+        return Inertia::render('Files', [
+            'files' => $files,
+            'folders' => $folders,
+        ]);
     }
 
     /**
@@ -40,7 +65,11 @@ class FileController extends Controller
             "user_id" => auth()->id()
         ]);
 
-        return redirect(route('files.index'));
+        if ($request->folder_id) {
+            return redirect(route('folders.show', $request->folder_id));
+        } else {
+            return redirect(route('files.index'));
+        };
     }
 
     /**

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->timestamps();
 
             //Relations
+            $table->integer('folder_id')->unsigned()->nullable();
+            $table->foreign('folder_id')->references('id')->on('folders')->onDelete('cascade');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

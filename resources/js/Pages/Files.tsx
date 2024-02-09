@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, useForm, Link } from "@inertiajs/react";
+import { Head, useForm, Link, usePage } from "@inertiajs/react";
 import { FileItem, FolderItem, PageProps } from "@/types";
 import UploadFileArea from "../Components/UploadFileArea";
 import { Button } from "../Components/ui/button";
@@ -8,12 +8,13 @@ import { Input } from "../Components/ui/input";
 interface FilesProps extends PageProps {
     files: Array<FileItem>;
     folders: Array<FolderItem>;
+    folder_id: String;
 }
 
-export default function Files({ auth, files, folders }: FilesProps) {
+export default function Files({ auth, files, folders, folder_id }: FilesProps) {
     const { data, setData, post, processing, errors } = useForm({
         name: "",
-        folder_id: null,
+        folder_id: folder_id || null,
     });
 
     const {
@@ -24,16 +25,18 @@ export default function Files({ auth, files, folders }: FilesProps) {
         errors: folderErrors,
     } = useForm({
         name: "",
-        folder_id: null,
+        folder_id: folder_id || null,
     });
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
         post(route("files.store"));
+        setData("name", "");
     };
 
     const submitFolder = (e: React.FormEvent) => {
         e.preventDefault();
+        setFolderData("name", "");
         folderPost(route("folders.store"));
     };
 

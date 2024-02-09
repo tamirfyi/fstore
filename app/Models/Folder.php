@@ -13,11 +13,16 @@ class Folder extends Model
     // use HasUuids;
 
     protected $table = 'folders';
-    protected $fillable = ['name', "user_id"];
+    protected $fillable = ['name', "folder_id", "user_id"];
 
 
     public function files(): HasMany
     {
         return $this->hasMany(File::class);
+    }
+
+    public function folders(): HasMany
+    {
+        return $this->hasMany(Folder::class);
     }
 }

@@ -15,8 +15,8 @@ class File extends Model
     protected $table = 'files';
     protected $fillable = ['name', 'folder_id', 'user_id'];
 
-    // public function folder(): BelongsTo
-    // {
-    //     return $this->belongsTo(Folder::class);
-    // }
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(Folder::class);
+    }
 }

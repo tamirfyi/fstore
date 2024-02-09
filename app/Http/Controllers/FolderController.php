@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
 use App\Models\Folder;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class FolderController extends Controller
 {
@@ -30,14 +32,20 @@ class FolderController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'folder_id' => 'integer|nullable',
         ]);
 
         Folder::create([
             "name" => $validated['name'],
+            "folder_id" => $validated['folder_id'],
             "user_id" => auth()->id()
         ]);
 
-        return redirect(route('files.index'));
+        if ($request->folder_id) {
+            return redirect(route('folders.show', $request->folder_id));
+        } else {
+            return redirect(route('files.index'));
+        };
     }
 
     /**
@@ -45,7 +53,15 @@ class FolderController extends Controller
      */
     public function show(string $id)
     {
-        return $id;
+        $files = File::where('folder_id', $id)->get();
+        $folders = Folder::where('folder_id', $id)->get();
+
+
+        return Inertia::render('Files', [
+            'files' => $files,
+            'folders' => $folders,
+            'folder_id' => $id,
+        ]);
     }
 
     /**

@@ -85,6 +85,7 @@ class FolderController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Folder::find($id)->delete();
+        return redirect(route('files.index'));
     }
 }

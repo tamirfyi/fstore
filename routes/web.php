@@ -56,12 +56,14 @@ Route::prefix('/files')->group(function () {
     Route::get('/', [FileController::class, 'index'])->middleware(['auth', 'verified'])->name('files.index');
     Route::get('/{id}', [FileController::class, 'show'])->middleware(['auth', 'verified'])->name('files.show');
     Route::post('/new', [FileController::class, 'store'])->middleware(['auth', 'verified'])->name('files.store');
+    Route::delete('/delete/{id}', [FileController::class, 'destroy'])->middleware(['auth', 'verified'])->name('files.destroy');
 });
 
 Route::prefix("/folders")->group(function () {
     Route::get('/', [FolderController::class, 'index'])->name('folders.index');
     Route::get('/{id}', [FolderController::class, 'show'])->middleware(['auth', 'verified'])->name('folders.show');
     Route::post('/new', [FolderController::class, 'store'])->name('folders.store');
+    Route::delete('/delete/{id}', [FolderController::class, 'destroy'])->name('folders.destroy');
 });
 
 Route::prefix('/shared')->group(function () {

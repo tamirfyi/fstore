@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, useForm, Link, usePage } from "@inertiajs/react";
+import { Head, useForm, Link, usePage, router } from "@inertiajs/react";
 import { FileItem, FolderItem, PageProps } from "@/types";
 import UploadFileArea from "../Components/UploadFileArea";
 import { Button } from "../Components/ui/button";
@@ -40,6 +40,21 @@ export default function Files({ auth, files, folders, folder_id }: FilesProps) {
         folderPost(route("folders.store"));
     };
 
+    const deleteFile = (fileId: string) => {
+        console.log("deleting", fileId);
+        if (confirm("Are you sure you want to delete this file?")) {
+            router.delete(route("files.destroy", fileId));
+        }
+    };
+
+    // Function to handle folder deletion
+    const deleteFolder = (folderId: string) => {
+        console.log("deleting", folderId);
+        if (confirm("Are you sure you want to delete this folder?")) {
+            router.delete(route("folders.destroy", folderId));
+        }
+    };
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="All files" />
@@ -75,26 +90,48 @@ export default function Files({ auth, files, folders, folder_id }: FilesProps) {
                     files.map((file) => {
                         return (
                             <div
+                                className="flex items-center w-full gap-2"
                                 key={file.id.toString()}
-                                className="p-4 border border-gray-300 rounded-md"
                             >
-                                <p>{file.name}</p>
+                                <div className="px-24 py-2 border border-gray-300 rounded-md">
+                                    <p>{file.name}</p>
+                                </div>
+                                <Button
+                                    onClick={() =>
+                                        deleteFile(file.id.toString())
+                                    }
+                                    variant={"destructive"}
+                                >
+                                    Delete
+                                </Button>
                             </div>
                         );
                     })}
                 {folders.length > 0 &&
                     folders.map((folder) => {
                         return (
-                            <Link
-                                href={route(
-                                    "folders.show",
-                                    folder.id.toString()
-                                )}
+                            <div
+                                className="flex gap-2"
                                 key={folder.id.toString()}
-                                className="p-4 bg-gray-200 border border-gray-300 rounded-md"
                             >
-                                {folder.name}
-                            </Link>
+                                <Link
+                                    href={route(
+                                        "folders.show",
+                                        folder.id.toString()
+                                    )}
+                                    className="px-24 py-2 bg-gray-200 border border-gray-300 rounded-md"
+                                >
+                                    {folder.name}
+                                </Link>
+                                <Button
+                                    onClick={() =>
+                                        deleteFolder(folder.id.toString())
+                                    }
+                                    variant={"destructive"}
+                                >
+                                    Delete
+                                </Button>
+                            </div>
                         );
                     })}
             </div>

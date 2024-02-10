@@ -5,20 +5,20 @@ export interface User {
     email_verified_at: string;
 }
 
-export interface FileItem {
-    id: String;
-    name: String;
-    created_at: String;
-    updated_at: String;
-    folder_id: String | null;
+export interface IFileItem {
+    id: string;
+    name: string;
+    created_at: string;
+    updated_at: string;
+    folder_id: string | null;
     user_id: number;
 }
 
-export interface FolderItem {
-    id: String;
-    name: String;
-    created_at: String;
-    updated_at: String;
+export interface IFolderItem {
+    id: string;
+    name: string;
+    created_at: string;
+    updated_at: string;
     user_id: number;
 }
 

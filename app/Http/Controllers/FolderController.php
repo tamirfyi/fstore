@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\File;
 use App\Models\Folder;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -77,7 +78,20 @@ class FolderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        Folder::find($id)->update([
+            "name" => $validated['name'],
+            "updated_at" => Carbon::now()
+        ]);
+
+        if ($request->folder_id) {
+            return redirect(route('folders.show', $request->folder_id));
+        } else {
+            return redirect(route('files.index'));
+        };
     }
 
     /**

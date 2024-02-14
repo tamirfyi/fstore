@@ -1,4 +1,4 @@
-import { Link, router } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import { IFolderItem } from "../../types";
 import { Button } from "../ui/button";
 
@@ -19,6 +19,7 @@ const FolderItem = ({ folder }: FolderItemProps) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editingName, setEditingName] = useState<string>(folder.name);
 
+    // Functions for renaming folder
     const deleteFolder = () => {
         console.log("deleting", folder.id.toString());
         if (confirm("Are you sure you want to delete this folder?")) {
@@ -43,15 +44,62 @@ const FolderItem = ({ folder }: FolderItemProps) => {
             route("folders.update", {
                 id: folder.id,
                 name: editingName,
+                op: "name",
             })
         );
         setIsEditing(false);
     };
 
+    //Drag and drop functions
+    const handleDragStart = (
+        e: React.DragEvent<HTMLDivElement>,
+        folder: IFolderItem
+    ) => {
+        e.dataTransfer.setData("type", "folder");
+        e.dataTransfer.setData("folderId", folder.id);
+        e.dataTransfer.setData("parentFolderId", folder.folder_id);
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    };
+
+    const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (
+        e: React.DragEvent<HTMLDivElement>,
+        folder: IFolderItem
+    ) => {
+        const draggedFolderId = e.dataTransfer.getData("folderId");
+        const draggedFolderParentId = e.dataTransfer.getData("parentFolderId");
+        if (draggedFolderId && draggedFolderId !== folder.id.toString()) {
+            console.log(
+                `dropped folder ${draggedFolderId} onto ${folder.id.toString()}`
+            );
+            router.put(
+                route("folders.update", {
+                    id: draggedFolderId,
+                    folder_id: folder.id,
+                    op: "move",
+                    redirect: draggedFolderParentId,
+                })
+            );
+        }
+    };
+
     return (
-        <div className="flex gap-2">
-            <ContextMenu>
-                <ContextMenuTrigger>
+        <ContextMenu>
+            <ContextMenuTrigger>
+                <div
+                    className="flex justify-center py-2 bg-gray-100 border border-gray-300 rounded-md item-center"
+                    draggable="true"
+                    onDragStart={(e) => handleDragStart(e, folder)}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, folder)}
+                >
                     {isEditing ? (
                         <Input
                             value={editingName}
@@ -63,22 +111,20 @@ const FolderItem = ({ folder }: FolderItemProps) => {
                             }}
                         />
                     ) : (
-                        <Link
+                        <a
+                            className=""
                             href={route("folders.show", folder.id.toString())}
-                            className="px-24 py-2 bg-gray-200 border border-gray-300 rounded-md"
                         >
                             {folder.name}
-                        </Link>
+                        </a>
                     )}
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                    <ContextMenuItem onClick={editFolder}>Edit</ContextMenuItem>
-                    <ContextMenuItem onClick={deleteFolder}>
-                        Delete
-                    </ContextMenuItem>
-                </ContextMenuContent>
-            </ContextMenu>
-        </div>
+                </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+                <ContextMenuItem onClick={editFolder}>Edit</ContextMenuItem>
+                <ContextMenuItem onClick={deleteFolder}>Delete</ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu>
     );
 };
 

@@ -78,21 +78,38 @@ class FolderController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $folder = Folder::find($id);
+
+        if (!$folder) {
+            return response()->json(['message' => 'Folder not found'], 404);
+        }
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
+            'folder_id' => 'nullable|integer|exists:folders,id'
         ]);
 
-        Folder::find($id)->update([
-            "name" => $validated['name'],
-            "updated_at" => Carbon::now()
+
+        $folder->update([
+            "name" => $validated['name'] ?? $folder->name,
+            "folder_id" => $validated['folder_id'] ?? $folder->folder_id,
         ]);
 
-        if ($request->folder_id) {
-            return redirect(route('folders.show', $request->folder_id));
-        } else {
-            return redirect(route('files.index'));
-        };
+        if ($request->op == "move") {
+            if ($request->redirect) {
+                return redirect(route('folders.show', $request->redirect));
+            } else {
+                return redirect(route('files.index'));
+            }
+        } else if ($request->op == "edit") {
+            if ($request->folder_id) {
+                return redirect(route('folders.show', $request->folder_id));
+            } else {
+                return redirect(route('files.index'));
+            }
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.

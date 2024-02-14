@@ -72,7 +72,7 @@ export default function Files({ auth, files, folders, folder_id }: FilesProps) {
             </form>
 
             {/* <UploadFileArea /> */}
-            <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-4 gap-4">
                 {files.length > 0 &&
                     files.map((file) => {
                         return (

@@ -48,33 +48,32 @@ const FileItem = ({ file }: FileItemProps) => {
     };
 
     return (
-        <div className="flex items-center w-full gap-2">
-            <ContextMenu>
-                <ContextMenuTrigger>
-                    <div className="px-24 py-2 border border-gray-300 rounded-md">
-                        {isEditing ? (
-                            <Input
-                                value={editingName}
-                                onKeyDown={onKeyDownWhileEditing}
-                                onChange={(
-                                    e: React.ChangeEvent<HTMLInputElement>
-                                ) => {
-                                    setEditingName(e.target.value);
-                                }}
-                            />
-                        ) : (
-                            <p>{file.name}</p>
-                        )}
-                    </div>
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                    <ContextMenuItem onClick={editFile}>Rename</ContextMenuItem>
-                    <ContextMenuItem onClick={deleteFile}>
-                        Delete
-                    </ContextMenuItem>
-                </ContextMenuContent>
-            </ContextMenu>
-        </div>
+        <ContextMenu>
+            <ContextMenuTrigger>
+                <div
+                    className="flex items-center justify-center py-2 border border-gray-300 rounded-md"
+                    draggable="true"
+                >
+                    {isEditing ? (
+                        <Input
+                            value={editingName}
+                            onKeyDown={onKeyDownWhileEditing}
+                            onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                            ) => {
+                                setEditingName(e.target.value);
+                            }}
+                        />
+                    ) : (
+                        <p>{file.name}</p>
+                    )}
+                </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+                <ContextMenuItem onClick={editFile}>Rename</ContextMenuItem>
+                <ContextMenuItem onClick={deleteFile}>Delete</ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu>
     );
 };
 

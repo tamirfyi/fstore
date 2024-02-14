@@ -19,6 +19,7 @@ export interface IFolderItem {
     name: string;
     created_at: string;
     updated_at: string;
+    folder_id: integer;
     user_id: number;
 }
 

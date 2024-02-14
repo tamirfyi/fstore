@@ -56,12 +56,17 @@ const FolderItem = ({ folder }: FolderItemProps) => {
         folder: IFolderItem
     ) => {
         e.dataTransfer.setData("type", "folder");
-        e.dataTransfer.setData("folderId", folder.id);
-        e.dataTransfer.setData("parentFolderId", folder.folder_id);
+        e.dataTransfer.setData("folderId", JSON.stringify(folder.id));
+        e.dataTransfer.setData(
+            "parentFolderId",
+            JSON.stringify(folder.folder_id ? folder.folder_id : null)
+        );
+        e.stopPropagation();
     };
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
+        e.stopPropagation();
     };
 
     const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
@@ -72,18 +77,27 @@ const FolderItem = ({ folder }: FolderItemProps) => {
         e: React.DragEvent<HTMLDivElement>,
         folder: IFolderItem
     ) => {
-        const draggedFolderId = e.dataTransfer.getData("folderId");
-        const draggedFolderParentId = e.dataTransfer.getData("parentFolderId");
+        e.preventDefault();
+        e.stopPropagation();
+
+        const draggedFolderId = JSON.parse(e.dataTransfer.getData("folderId"));
+        const draggedFolderParentId = JSON.parse(
+            e.dataTransfer.getData("parentFolderId")
+        );
+        console.log(draggedFolderParentId);
         if (draggedFolderId && draggedFolderId !== folder.id.toString()) {
             console.log(
                 `dropped folder ${draggedFolderId} onto ${folder.id.toString()}`
             );
+            console.log(draggedFolderParentId || "root");
             router.put(
                 route("folders.update", {
                     id: draggedFolderId,
                     folder_id: folder.id,
                     op: "move",
-                    redirect: draggedFolderParentId,
+                    redirect: draggedFolderParentId
+                        ? draggedFolderParentId
+                        : "root",
                 })
             );
         }
@@ -93,12 +107,15 @@ const FolderItem = ({ folder }: FolderItemProps) => {
         <ContextMenu>
             <ContextMenuTrigger>
                 <div
-                    className="flex justify-center py-2 bg-gray-100 border border-gray-300 rounded-md item-center"
+                    className="flex justify-center py-2 bg-gray-100 border border-gray-300 rounded-md item-center hover:cursor-pointer"
                     draggable="true"
                     onDragStart={(e) => handleDragStart(e, folder)}
                     onDragEnd={handleDragEnd}
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, folder)}
+                    onDoubleClick={() => {
+                        router.get(route("folders.show", folder.id.toString()));
+                    }}
                 >
                     {isEditing ? (
                         <Input
@@ -111,12 +128,7 @@ const FolderItem = ({ folder }: FolderItemProps) => {
                             }}
                         />
                     ) : (
-                        <a
-                            className=""
-                            href={route("folders.show", folder.id.toString())}
-                        >
-                            {folder.name}
-                        </a>
+                        <a>{folder.name}</a>
                     )}
                 </div>
             </ContextMenuTrigger>

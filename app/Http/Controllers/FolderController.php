@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+use function PHPUnit\Framework\isNull;
+
 class FolderController extends Controller
 {
     /**
@@ -96,13 +98,14 @@ class FolderController extends Controller
         ]);
 
         if ($request->op == "move") {
-            if ($request->redirect) {
-                return redirect(route('folders.show', $request->redirect));
+            if ($request->redirect === 'root') {
+                return redirect(route("files.index"));
             } else {
-                return redirect(route('files.index'));
+                $redirectId = $request->redirect ?: $folder->folder_id;
+                return redirect(route('folders.show', $redirectId));
             }
         } else if ($request->op == "edit") {
-            if ($request->folder_id) {
+            if ($request->id) {
                 return redirect(route('folders.show', $request->folder_id));
             } else {
                 return redirect(route('files.index'));
